@@ -104,3 +104,43 @@ elem' a (x:xs)
 -- sum1 [] = 0
 sum1 [x] = x
 sum1 (x : xs) = x + sum1 xs
+
+# High order functions
+
+#***********************
+zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith' _ [] _ = []
+zipWith' _ _ [] = []
+zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
+
+
+#***********************
+
+flip1 :: (a -> b -> c) -> (b -> a -> c)
+flip1 f = g
+    where g x y = f y x
+
+
+#*
+
+flip2 :: (a -> b -> c) -> b -> a -> c
+flip2 f y x = f x y
+
+
+#********************************
+
+map :: (a -> b) -> [a] -> [b]
+map _ [] = []
+map f (x:xs) = f x : map f xs
+
+#*********************
+
+filter1 :: (a -> Bool) -> [a] -> [a]
+filter1 _ [] = []
+filter1 f x = [e | e <- x, f e == True]
+
+filter2 :: (a -> Bool) -> [a] -> [a]
+filter2 _ [] = []
+filter2 p (x:xs)
+    | p x       = x : filter2 p xs
+    | otherwise = filter2 p xs
