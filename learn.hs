@@ -212,6 +212,10 @@ chain n
 
 data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
 
+-- data means that we're defining a new data type.
+-- The part before the = denotes the type, which is Tree.
+-- The parts after the = are value constructors.
+
 singleton :: a -> Tree a
 singleton x = Node x EmptyTree EmptyTree
 
