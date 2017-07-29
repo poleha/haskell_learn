@@ -44,6 +44,16 @@ quickSort2 (p:xs) = quickSort2 lesser ++ [p] ++ quickSort2 greater
           greater = filter (>= p) xs
 
 
+#*
+
+quicksort3 :: (Ord a) => [a] -> [a]
+quicksort3 [] = []
+quicksort3 (x:xs) =
+    let smallerSorted = quicksort3 (filter (<=x) xs)
+        biggerSorted = quicksort3 (filter (>x) xs)
+    in  smallerSorted ++ [x] ++ biggerSorted
+
+
 #*************************
 replicate1 :: (Num i, Ord i) => i -> a -> [a]
 replicate1 0 x = []
@@ -144,3 +154,83 @@ filter2 _ [] = []
 filter2 p (x:xs)
     | p x       = x : filter2 p xs
     | otherwise = filter2 p xs
+
+
+#***************************
+largestDivisible1 :: (Integral a) => a
+largestDivisible1 x n = head [e | e <- [x, x-1..], e `mod` n == 0]
+
+#*
+largestDivisible2 :: (Integral a) => a
+largestDivisible2 x n = head (filter f [x, x-1..])
+    where
+        f e = e `mod` n == 0
+
+
+#***************************
+
+--find the sum of all odd squares that are smaller than 10,000
+
+sum (takeWhile (<10000) (filter odd (map (^2) [1..])))
+
+#*
+
+sum (takeWhile (<10000) [n^2 | n <- [1..], odd (n^2)])
+
+
+#***************************
+
+--takeWhile Implement!
+
+#*************************
+
+{-
+For our next problem, we'll be dealing with Collatz sequences. We take a natural number.
+If that number is even, we divide it by two. If it's odd, we multiply it by 3 and then add 1 to that.
+We take the resulting number and apply the same thing to it, which produces a new number and so on.
+In essence, we get a chain of numbers. It is thought that for all starting numbers, the chains finish
+at the number 1. So if we take the starting number 13, we get this sequence:
+13, 40, 20, 10, 5, 16, 8, 4, 2, 1. 13*3 + 1 equals 40.
+40 divided by 2 is 20, etc. We see that the chain has 10 terms.
+-}
+
+
+chain :: (Integral a) => a -> [a]
+chain 1 = [1]
+chain n
+    | even n =  n:chain (n `div` 2)
+    | odd n  =  n:chain (n*3 + 1)
+
+
+#**********************************************
+-- Types and typeclasses
+
+
+#*************************
+-- Binary search tree
+--stud
+
+data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
+
+singleton :: a -> Tree a
+singleton x = Node x EmptyTree EmptyTree
+
+treeInsert :: (Ord a) => a -> Tree a -> Tree a
+treeInsert x EmptyTree = singleton x
+treeInsert x (Node a left right)
+    | x == a = Node x left right
+    | x < a  = Node a (treeInsert x left) right
+    | x > a  = Node a left (treeInsert x right)
+
+
+treeElem :: (Ord a) => a -> Tree a -> Bool
+treeElem x EmptyTree = False
+treeElem x (Node a left right)
+    | x == a = True
+    | x < a  = treeElem x left
+    | x > a  = treeElem x right
+
+main = print(result)
+    where
+        tree = treeInsert 5 $ treeInsert 1 $ treeInsert 3 $ singleton 2
+        result = treeElem 1 tree
