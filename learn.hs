@@ -213,7 +213,9 @@ chain n
 data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
 
 -- data means that we're defining a new data type.
--- The part before the = denotes the type, which is Tree.
+-- The part before the = denotes the type, which is Tree. In that case that's type constructor
+-- because it has a.
+-- Type would be Tree Int for example
 -- The parts after the = are value constructors.
 
 singleton :: a -> Tree a
@@ -238,3 +240,99 @@ main = print(result)
     where
         tree = treeInsert 5 $ treeInsert 1 $ treeInsert 3 $ singleton 2
         result = treeElem 1 tree
+
+#*****************************
+
+data List a = Empty | Cons { listHead :: a, listTail :: List a} deriving (Show, Read, Eq, Ord)
+
+main = print(a)
+    where
+        a = Cons 3 (Cons 4 (Cons 5 Empty))
+-- Cons {listHead = 3, listTail = Cons {listHead = 4, listTail = Cons {listHead = 5, listTail = Empty}}}
+
+#***
+
+
+
+data List a = Empty | a :-: (List a) deriving (Show, Read, Eq, Ord)
+
+
+{-
+When we define functions as operators, we can use that to give them a fixity
+(but we don't have to). A fixity states how tightly the operator binds and whether it's
+left-associative or right-associative. For instance, *'s fixity is infixl 7 * and +'s fixity
+is infixl 6. That means that they're both left-associative (4 * 3 * 2 is (4 * 3) * 2) but * binds
+ tighter than +, because it has a greater fixity, so 5 * 4 + 3 is (5 * 4) + 3.
+ -}
+
+infixr 5 :-:
+infixr 5  .++
+(.++) :: List a -> List a -> List a
+Empty .++ ys = ys
+(x :-: xs) .++ ys = x :-: (xs .++ ys)
+
+main = print(c)
+    where
+        a = 3 :-: 4 :-: 5 :-: Empty
+        b = 6 :-: 7 :-: Empty
+        c = a .++ b
+
+
+-- 3 :-: (4 :-: (5 :-: (6 :-: (7 :-: Empty))))
+
+
+#*********************************
+
+data TrafficLight = Red | Yellow | Green
+
+
+class Eq1 a where
+    (===) :: a -> a -> Bool
+    (/==) :: a -> a -> Bool
+
+
+instance Eq1 TrafficLight where --like deriving Eq1
+    Red === Red = True
+    Green === Green = True
+    Yellow === Yellow = True
+    _ === _ = False
+
+instance Show TrafficLight where
+    show Red = "Red light"
+    show Yellow = "Yellow light"
+    show Green = "Green light"
+
+
+main = print(a)
+    where
+        a = Red === Red
+
+#*********************************
+
+class YesNo a where
+    yesno :: a -> Bool
+
+instance YesNo Int where
+    yesno 0 = False
+    yesno _ = True
+
+
+instance YesNo [a] where
+    yesno [] = False
+    yesno _ = True
+
+
+instance YesNo Bool where
+    yesno = id
+
+instance YesNo (Maybe a) where
+    yesno (Just _) = True
+    yesno Nothing = False
+
+
+yesnoIf :: (YesNo y) => y -> a -> a -> a
+yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noResult
+
+main = print(a)
+    where
+        a = yesnoIf [] "YEAH!" "NO!"
