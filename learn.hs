@@ -438,3 +438,9 @@ main = do
 8
 0
 -}
+
+
+{-
+The best path to take is: BCACBBC
+The price is: 75
+-}
