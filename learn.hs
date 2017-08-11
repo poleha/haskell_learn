@@ -202,6 +202,26 @@ chain n
     | odd n  =  n:chain (n*3 + 1)
 
 
+
+#*****************************
+
+import Data.Char
+import Data.List
+
+main = do line <- fmap (intersperse '-' . reverse . map toUpper) getLine
+          putStrLn line
+
+#***
+
+import Data.Char
+import Data.List
+
+main = do line <- fmap (\xs -> intersperse '-' (reverse (map toUpper xs))) getLine
+          putStrLn line
+
+
+
+
 #**********************************************
 -- Types and typeclasses
 
@@ -383,6 +403,7 @@ import Data.List
 data Label = A | B | C deriving (Show)
 type Path = [(Label, Int)]
 data Section = Section { getA :: Int, getB :: Int, getC :: Int } deriving (Show)
+--data Section = Section Int Int Int deriving (Show)
 type RoadSystem = [Section]
 
 roadStep :: (Path, Path) -> Section -> (Path, Path)
