@@ -535,3 +535,34 @@ CJust 0 "haha"
 
 
 #*********************************
+
+-- Various Functor instances
+
+instance Functor ((->) r) where
+    fmap f g = (\x -> f (g x))
+
+instance Functor ((->) r) where
+    fmap = (.)
+
+instance Functor ((->) e) where
+    fmap f g = g . f
+
+instance Functor Maybe where
+    fmap f (Just x) = Just (f x)
+    fmap f Nothing = Nothing
+
+instance Functor [] where
+    fmap = map
+
+instance Functor IO where
+    fmap f action = do
+        result <- action
+        return (f result)
+
+instance Functor (Either e) where
+	fmap _ (Left a) = Left a
+	fmap f (Right a) = Right (f a)
+
+instance Functor ((,) e) where
+    fmap f (c, v) = (c, f v)
+
