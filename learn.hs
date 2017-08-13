@@ -465,3 +465,73 @@ main = do
 The best path to take is: BCACBBC
 The price is: 75
 -}
+
+
+#************************************
+-- Functor laws
+{-
+The first functor law states that if we map the id function over a functor,
+the functor that we get back should be the same as the original functor.
+If we write that a bit more formally, it means that fmap id = id
+
+ghci> fmap id (Just 3)
+Just 3
+ghci> id (Just 3)
+Just 3
+ghci> fmap id [1..5]
+[1,2,3,4,5]
+ghci> id [1..5]
+[1,2,3,4,5]
+ghci> fmap id []
+[]
+ghci> fmap id Nothing
+Nothing
+-}
+
+#***
+
+{-
+The second law says that composing two functions and then mapping the
+resulting function over a functor should be the same as first mapping one
+function over the functor and then mapping the other one. Formally written,
+that means that fmap (f . g) = fmap f . fmap g. Or to write it in another way,
+for any functor F, the following should hold: fmap (f . g) F = fmap f (fmap g F).
+-}
+
+#***
+
+{-
+If you want, we can check out how the second functor law holds for Maybe.
+If we do fmap (f . g) over Nothing, we get Nothing, because doing a fmap with any
+function over Nothing returns Nothing. If we do fmap f (fmap g Nothing), we get
+Nothing, for the same reason. OK, seeing how the second law holds for Maybe if it's
+a Nothing value is pretty easy, almost trivial.
+
+How about if it's a Just something value? Well, if we do fmap (f . g) (Just x),
+we see from the implementation that it's implemented as Just ((f . g) x), which is,
+of course, Just (f (g x)). If we do fmap f (fmap g (Just x)), we see from the
+implementation that fmap g (Just x) is Just (g x). Ergo, fmap f (fmap g (Just x))
+equals fmap f (Just (g x)) and from the implementation we see that this equals
+Just (f (g x)).
+
+-}
+
+#***
+
+{-
+Let's take a look at a pathological example of a type constructor being an instance of the Functor typeclass but not really being a functor, because it doesn't satisfy the laws. Let's say that we have a type:
+-}
+
+data CMaybe a = CNothing | CJust Int a deriving (Show)
+
+instance Functor CMaybe where
+    fmap f CNothing = CNothing
+    fmap f (CJust counter x) = CJust (counter+1) (f x)
+
+ghci> fmap id (CJust 0 "haha")
+CJust 1 "haha"
+ghci> id (CJust 0 "haha")
+CJust 0 "haha"
+
+
+#*********************************
