@@ -228,7 +228,7 @@ main = do line <- fmap (\xs -> intersperse '-' (reverse (map toUpper xs))) getLi
 
 #*************************
 -- Binary search tree
---stud
+-- stud
 
 data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
 
@@ -262,6 +262,7 @@ main = print(result)
         result = treeElem 1 tree
 
 #*****************************
+-- stud
 
 data List a = Empty | Cons { listHead :: a, listTail :: List a} deriving (Show, Read, Eq, Ord)
 
@@ -377,6 +378,7 @@ main = print1(a)
 
 # Solving problems
 #**********************************
+-- stud
 -- Reverse polish notation
 -- http://learnyouahaskell.com/functionally-solving-problems
 
@@ -388,7 +390,7 @@ solveRPN = head . foldl foldingFunction [] . words
             foldingFunction xs numberString = read numberString:xs
 
 #**********************************
-
+-- stud
 {-
 http://learnyouahaskell.com/functionally-solving-problems
 There are two main roads going from Heathrow to London and there's a number
@@ -535,7 +537,7 @@ CJust 0 "haha"
 
 
 #*********************************
-
+-- stud
 -- Various Functor instances
 
 instance Functor ((->) r) where
@@ -566,3 +568,43 @@ instance Functor (Either e) where
 instance Functor ((,) e) where
     fmap f (c, v) = (c, f v)
 
+#**********************************
+-- Random
+
+threeCoins :: StdGen -> (Bool, Bool, Bool)
+threeCoins gen =
+    let (firstCoin, newGen) = random gen
+        (secondCoin, newGen') = random newGen
+        (thirdCoin, newGen'') = random newGen'
+    in  (firstCoin, secondCoin, thirdCoin)
+
+
+#*************************
+
+randoms' :: (RandomGen g, Random a) => g -> [a]
+randoms' gen = let (value, newGen) = random gen in value:randoms' newGen
+
+
+#*****************************
+-- stud
+
+--Here's a little program that will make the user guess which number it's thinking of.
+
+import System.Random
+import Control.Monad(when)
+
+main = do
+    gen <- getStdGen
+    askForNumber gen
+
+askForNumber :: StdGen -> IO ()
+askForNumber gen = do
+    let (randNumber, newGen) = randomR (1,10) gen :: (Int, StdGen)
+    putStr "Which number in the range from 1 to 10 am I thinking of? "
+    numberString <- getLine
+    when (not $ null numberString) $ do
+        let number = read numberString
+        if randNumber == number
+            then putStrLn "You are correct!"
+            else putStrLn $ "Sorry, it was " ++ show randNumber
+        askForNumber newGen
