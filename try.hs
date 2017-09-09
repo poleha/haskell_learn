@@ -1,10 +1,14 @@
-import Data.Char
-import Data.List
+import Network.HTTP
+import Control.Applicative
 
-main = do line <- fmap (intersperse '-' . reverse . map toUpper) getLine
-          putStrLn line
+get :: String -> IO String
+get url = do
+    response <- simpleHTTP $ getRequest url
+    getResponseBody response
 
+main = do
+    responses <- fmap get ["http://www.alfredodinapoli.com", "http://www.alfredodinapoli.com"]
 
-main = do line <- fmap (\xs -> intersperse '-' (reverse (map toUpper xs))) getLine
-          putStrLn line
+    --response <- fmap (take 100) (get "http://www.alfredodinapoli.com")
 
+    print("ddd")
