@@ -8,8 +8,15 @@ class Functor f where
     fmap :: (a -> b) -> f a -> f b
 
 
+
+map :: (a -> b) -> [a] -> [b]
+map _ [] = []
+map f (x:xs) = f x : map f xs
+
 instance Functor [] where
     fmap = map
+
+
 
 instance Functor Maybe where
     fmap f (Just x) = Just (f x)
@@ -72,9 +79,18 @@ instance Applicative ((->) r) where
     pure x = (\_ -> x)
     f <*> g = \x -> f x (g x)
 
+--(+) <$> (+3) <*> (*100) $ 5
+-- 508  
+
+
 instance Applicative ZipList where
         pure x = ZipList (repeat x)
         ZipList fs <*> ZipList xs = ZipList (zipWith (\f x -> f x) fs xs)
+
+zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith' _ [] _ = []
+zipWith' _ _ [] = []
+zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
 
 liftA2 :: (Applicative f) => (a -> b -> c) -> f a -> f b -> f c
 liftA2 f a b = f <$> a <*> b

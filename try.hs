@@ -1,14 +1,11 @@
-import Network.HTTP
-import Control.Applicative
 
-get :: String -> IO String
-get url = do
-    response <- simpleHTTP $ getRequest url
-    getResponseBody response
+
+
+
 
 main = do
-    responses <- fmap get ["http://www.alfredodinapoli.com", "http://www.alfredodinapoli.com"]
+    let res = test
+    print(res)
 
-    --response <- fmap (take 100) (get "http://www.alfredodinapoli.com")
 
-    print("ddd")
+--[(1,'a'),(1,'b'),(2,'a'),(2,'b')]

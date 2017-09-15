@@ -608,3 +608,47 @@ askForNumber gen = do
             then putStrLn "You are correct!"
             else putStrLn $ "Sorry, it was " ++ show randNumber
         askForNumber newGen
+
+#*********************************
+
+test :: Maybe Int
+test = Just 1 >>= \a -> Just 2 >>= \b -> return (a + b)
+--test = Just 1 >>= (\a -> Just 2 >>= (\b -> return (a + b)))
+
+
+#**********************************
+
+--When you have non-deterministic values interacting, you can view their
+--computation as a tree where every possible result in a list represents
+--a separate branch.
+
+
+listOfTuples1 :: [(Int,Char)]  
+listOfTuples1 = [1,2] >>= \n -> ['a','b'] >>= \ch -> return (n,ch) 
+--listOfTuples1 = [1,2] >>= (\n -> ['a','b']) >>= \ch -> return (n,ch) 
+--error: Variable not in scope: n
+
+
+listOfTuples2 :: [(Int,Char)]  
+listOfTuples2 = do
+      n <- [1,2]
+      ch <- ['a','b']
+      return (n,ch)  
+
+
+listOfTuples3 :: [(Int,Char)]  
+listOfTuples3 = concat $ map (\n -> concat $ (map (\ch -> [(n, ch)]) ['a', 'b'])) [1,2]
+
+
+main = do
+    let res = listOfTuples2
+    print(res)
+
+
+--[(1,'a'),(1,'b'),(2,'a'),(2,'b')]
+
+
+#*********************
+
+return 1 :: Maybe Int
+--Just 1
