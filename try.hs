@@ -1,11 +1,18 @@
-
-
+main = do
+    let h = (2+) >>= \x -> (3*) >>= \y -> return (x,y)
+        res = h 3
+    print(res)
 
 
 
 main = do
-    let res = test
+    let h = do
+            x <- (2+)
+            y <- (3*)
+            return (x, y)
+        res = h 3
     print(res)
 
 
---[(1,'a'),(1,'b'),(2,'a'),(2,'b')]
+
+

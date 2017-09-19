@@ -43,6 +43,11 @@ instance Functor ((->) r) where
 instance Functor ((->) r) where
     fmap = (.)
 
+ghci> let f = (*5)
+ghci> let g = (+3)
+ghci> (fmap f g) 8
+55
+
 --Laws:
 
 -- 1) fmap id = id
@@ -214,6 +219,40 @@ instance Monad [] where
     xs >>= f = concat (map f xs)
     fail _ = []
 
+
+instance Monad ((->) r) where
+    return x = \_ -> x
+    h >>= f = \w -> f (h w) w
+
+
+*****
+main = do
+    let h = (2+) >>= \x -> (3*) >>= \y -> return (x,y)
+        res = h 3
+    print(res)
+
+
+
+main = do
+    let h = do
+            x <- (2+)
+            y <- (3*)
+            return (x, y)
+        res = h 3
+    print(res)
+
+*****
+
+import Control.Monad.Instances
+
+addStuff :: Int -> Int
+addStuff = do
+    a <- (*2)
+    b <- (+10)
+    return (a+b)
+
+ghci> addStuff 3
+19
 
 -- MonadPlus
 
