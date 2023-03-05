@@ -623,21 +623,21 @@ test = Just 1 >>= \a -> Just 2 >>= \b -> return (a + b)
 --a separate branch.
 
 
-listOfTuples1 :: [(Int,Char)]  
-listOfTuples1 = [1,2] >>= \n -> ['a','b'] >>= \ch -> return (n,ch) 
---listOfTuples1 = [1,2] >>= (\n -> ['a','b']) >>= \ch -> return (n,ch) 
+listOfTuples1 :: [(Int,Char)]  
+listOfTuples1 = [1,2] >>= \n -> ['a','b'] >>= \ch -> return (n,ch) 
+--listOfTuples1 = [1,2] >>= (\n -> ['a','b']) >>= \ch -> return (n,ch) 
 --error: Variable not in scope: n
 
 
-listOfTuples2 :: [(Int,Char)]  
-listOfTuples2 = do
-      n <- [1,2]
-      ch <- ['a','b']
-      return (n,ch)  
+listOfTuples2 :: [(Int,Char)]  
+listOfTuples2 = do
+      n <- [1,2]
+      ch <- ['a','b']
+      return (n,ch)  
 
 
-listOfTuples3 :: [(Int,Char)]  
-listOfTuples3 = concat $ map (\n -> concat $ (map (\ch -> [(n, ch)]) ['a', 'b'])) [1,2]
+listOfTuples3 :: [(Int,Char)]  
+listOfTuples3 = concat $ map (\n -> concat $ (map (\ch -> [(n, ch)]) ['a', 'b'])) [1,2]
 
 
 main = do
@@ -652,3 +652,22 @@ main = do
 
 return 1 :: Maybe Int
 --Just 1
+
+
+*****************
+
+sequenceA :: (Applicative f) => [f a] -> f [a]
+sequenceA [] = pure []
+sequenceA (x:xs) = (:) <$> x <*> sequenceA xs
+
+sequenceA :: (Applicative f) => [f a] -> f [a]
+sequenceA = foldr (liftA2 (:)) (pure [])
+
+
+sequenceA [(+1), (+2), (+3)] = /x => (:)(+1)x . (:)(+2)x . (:)(+3)x . (\_ -> [])x
+sequenceA [(+1), (+2), (+3)] 3 = (:)4 . (:)5 . (:)6 . [] = [4, 5, 6]
+
+sequenceA [4, 5, 6] = [:4, :5, :6] <*> [[]] = [4:[], 5:[], 6:[]] = [[4], [5], [6]]
+sequenceA [[1, 2, 3], [4, 5, 6]] = [:1, :2, :3] <*> sequenceA [4, 5, 6] = 
+[:1, :2, :3] <*> [[4], [5], [6]] = [1: [4], 1: [5], 1: [6], 2: [4], 2: [5], 2: [6], 3: [4], 3: [5], 3: [6]] =
+[[1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6]]
