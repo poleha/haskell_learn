@@ -44,6 +44,12 @@ instance Applicative ((->) r) where
     pure x = (\_ -> x)
     f <*> g = \x -> f x (g x)
 
+pure (+) <*> (+1) <*> (+2) $ 1
+(+) <$> (+1) <*> (+2) $ 1
+(\_ -> (+)) <*> (+1) <*> (+2) $ 1
+# 5
+
+
 # Monad
 
 class Monad m where
